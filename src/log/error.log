@@ -1,0 +1,41 @@
+{"level":"error","message":"Error al intentar agregar la categoria. You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?)' at line 1","timestamp":"2025-04-14T20:05:21.817Z"}
+{"level":"error","message":"Error al obtener el listado de tipos de canciones. Cannot read properties of undefined (reading 'busqueda')","timestamp":"2025-04-14T21:00:37.566Z"}
+{"level":"error","message":"Error al intentar agregar la canción. cancion.nombre.toUpper is not a function","timestamp":"2025-04-14T23:06:15.862Z"}
+{"level":"error","message":"Error al intentar agregar la canción. Table 'dbmusicbook.acordes' doesn't exist","timestamp":"2025-04-14T23:23:15.503Z"}
+{"level":"error","message":"Error al intentar agregar la canción. Column 'idCancion' cannot be null","timestamp":"2025-04-14T23:28:05.485Z"}
+{"level":"error","message":"Error al intentar agregar la canción. Duplicate entry '1' for key 'acordes.PRIMARY'","timestamp":"2025-04-14T23:28:37.007Z"}
+{"level":"error","message":"Error al intentar agregar la canción. Unknown column 'posicio' in 'field list'","timestamp":"2025-04-14T23:37:18.656Z"}
+{"level":"error","message":"Error al intentar agregar la canción. cancion.nombre.toString(...).toUpper is not a function","timestamp":"2025-04-14T23:38:57.091Z"}
+{"level":"error","message":"Error al obtener la canción nro: 2 Cannot read properties of null (reading 'busqueda')","timestamp":"2025-04-15T00:23:03.379Z"}
+{"level":"error","message":"Error al obtener la canción nro: 2 Cannot read properties of null (reading 'busqueda')","timestamp":"2025-04-15T00:23:38.138Z"}
+{"level":"error","message":"Error al intentar agregar la canción. Unknown column 'multitrack' in 'field list'","timestamp":"2025-04-15T13:42:14.970Z"}
+{"level":"error","message":"Error al intentar agregar la canción. etiquetas is not iterable","timestamp":"2025-04-15T13:42:51.599Z"}
+{"level":"error","message":"Error al intentar agregar la canción. etiquetas is not iterable","timestamp":"2025-04-15T13:43:23.568Z"}
+{"level":"error","message":"Error al intentar agregar la canción. etiqueta.trim(...).toLower is not a function","timestamp":"2025-04-15T13:44:12.999Z"}
+{"level":"error","message":"Error al intentar agregar la canción. Table 'dbmusicbook.etiqueta_cancion' doesn't exist","timestamp":"2025-04-15T13:44:59.460Z"}
+{"level":"error","message":"Error al obtener la canción nro: 5 Unknown column 'e.nombre' in 'field list'","timestamp":"2025-04-15T13:49:43.309Z"}
+{"level":"error","message":"Error al intentar modificar la categoria. etiquetas is not iterable","timestamp":"2025-04-16T01:15:34.900Z"}
+{"level":"error","message":"Error al intentar modificar la categoria. Column 'soloAcorde' cannot be null","timestamp":"2025-04-16T11:57:57.123Z"}
+{"level":"error","message":"Error al intentar modificar la categoria. Column 'soloAcorde' cannot be null","timestamp":"2025-04-16T11:59:47.388Z"}
+{"level":"error","message":"Error al intentar modificar la categoria. Column 'soloAcorde' cannot be null","timestamp":"2025-04-16T12:02:00.716Z"}
+{"level":"error","message":"Error al obtener el listado de canciones. Unknown column 'ce.id_etiqueta' in 'on clause'","timestamp":"2025-04-16T14:56:11.117Z"}
+{"level":"error","message":"Error al obtener el listado de canciones. Unknown column 'ce.id_etiqueta' in 'on clause'","timestamp":"2025-04-16T14:57:28.299Z"}
+{"level":"error","message":"Error al obtener el listado de canciones. Unknown column 'ce.id_etiqueta' in 'on clause'","timestamp":"2025-04-16T14:57:45.367Z"}
+{"level":"error","message":"Error al obtener el listado de canciones. Unknown column 'hijo' in 'where clause'","timestamp":"2025-04-16T15:05:05.695Z"}
+{"level":"error","message":"Error al obtener el listado de canciones. You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '[object Object] ORDER BY c.id DESC' at line 1","timestamp":"2025-04-16T19:40:50.281Z"}
+{"level":"error","message":"Error al obtener el listado de canciones. You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '[object Object] ORDER BY c.id DESC' at line 1","timestamp":"2025-04-16T19:41:08.265Z"}
+{"level":"error","message":"Error al obtener el listado de canciones. You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '[object Object] ORDER BY c.id DESC' at line 1","timestamp":"2025-04-16T19:41:44.627Z"}
+{"level":"error","message":"Error al obtener el listado de canciones. You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '[object Object] ORDER BY c.id DESC' at line 1","timestamp":"2025-04-16T19:43:30.979Z"}
+{"level":"error","message":"Error al obtener el listado de listas. Unknown column 'c' in 'field list'","timestamp":"2025-04-17T23:30:50.504Z"}
+{"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:45:38.141Z"}
+{"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:46:08.777Z"}
+{"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:46:40.826Z"}
+{"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:47:06.602Z"}
+{"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:47:25.395Z"}
+{"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:47:47.063Z"}
+{"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:48:13.562Z"}
+{"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:48:39.690Z"}
+{"level":"error","message":"Error al obtener la lista nro: 1 Cannot read properties of undefined (reading '0')","timestamp":"2025-04-17T23:49:22.351Z"}
+{"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:50:06.904Z"}
+{"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:50:25.321Z"}
+{"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:51:05.949Z"}
