@@ -1,4 +1,3 @@
-import { Console } from 'console';
 import db from '../db/conexion';
 import { Acorde } from '../models/Acorde';
 import { Cancion } from '../models/Cancion';

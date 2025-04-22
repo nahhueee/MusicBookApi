@@ -39,3 +39,6 @@
 {"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:50:06.904Z"}
 {"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:50:25.321Z"}
 {"level":"error","message":"Error al obtener la lista nro: 1 lista.canciones is not iterable","timestamp":"2025-04-17T23:51:05.949Z"}
+{"level":"error","message":"Error al obtener la lista nro: 3 Access denied for user 'root'@'localhost' (using password: NO)","timestamp":"2025-04-22T12:34:37.624Z"}
+{"level":"error","message":"Error al obtener el listado de listas. Access denied for user 'root'@'localhost' (using password: NO)","timestamp":"2025-04-22T12:34:40.020Z"}
+{"level":"error","message":"Error al obtener el listado de listas. Access denied for user 'root'@'localhost' (using password: NO)","timestamp":"2025-04-22T12:34:43.066Z"}

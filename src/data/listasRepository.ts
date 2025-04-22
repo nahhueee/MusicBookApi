@@ -45,42 +45,65 @@ class ListasRepository{
     //#endregion
 
     //#region ABM
-    async Agregar(data:any): Promise<string>{
+    async Agregar(lista:any): Promise<string>{
         const connection = await db.getConnection();
         
         try {
-            let existe = await ValidarExistencia(connection, data, false);
+
+            let existe = await ValidarExistencia(connection, lista, false);
             if(existe)//Verificamos si ya existe un registro con el mismo nombre 
-                return "Ya existe una categoria con el mismo nombre.";
+                return "Ya existe una lista con el mismo nombre.";
+
+            //Obtenemos el proximo nro de lista a insertar
+            lista.id = await ObtenerUltimaLista(connection);
             
-            const consulta = "INSERT INTO categorias(nombre,color) VALUES (?,?)";
-            const parametros = [data.nombre.toUpperCase(), data.color];
-            
-            await connection.query(consulta, parametros);
-            return "OK";
+            await connection.beginTransaction();
+
+            await InsertLista(connection, lista);
+
+            //Eliminamos todo antes de insertar
+            await connection.query("DELETE FROM cancion_lista WHERE idLista = ?", [lista.id]);
+
+            //Inserta las canciones de la lista
+            for (const cancion of lista.canciones!) {
+                cancion.idLista = lista.id;
+                await InsertCancionLista(connection, cancion);
+            };
+
+            await connection.commit();
+            return lista.id;
 
         } catch (error:any) {
+            //Si ocurre un error volvemos todo para atras
+            await connection.rollback();
             throw error;
         } finally{
             connection.release();
         }
     }
 
-    async Modificar(data:any): Promise<string>{
+    async Modificar(lista:any): Promise<string>{
         const connection = await db.getConnection();
         
         try {
-            let existe = await ValidarExistencia(connection, data, true);
+            let existe = await ValidarExistencia(connection, lista, true);
             if(existe)//Verificamos si ya existe un registro con el mismo nombre 
-                return "Ya existe una categoria con el mismo nombre.";
+                return "Ya existe una lista con el mismo nombre.";
             
-                const consulta = `UPDATE categorias 
-                SET nombre = ?,
-                    color = ?
-                WHERE id = ? `;
+            await connection.beginTransaction();
 
-            const parametros = [data.nombre.toUpperCase(), data.color, data.id];
-            await connection.query(consulta, parametros);
+            await UpdateLista(connection, lista);
+            
+            //Eliminamos todo antes de insertar
+            await connection.query("DELETE FROM cancion_lista WHERE idLista = ?", [lista.id]);
+
+            //Inserta las canciones de la lista
+            for (const cancion of lista.canciones!) {
+                cancion.idLista = lista.id;
+                await InsertCancionLista(connection, cancion);
+            };
+
+            await connection.commit();
             return "OK";
 
         } catch (error:any) {
@@ -123,7 +146,7 @@ async function ObtenerCancionesLista(connection, idLista:number){
                 const row = rows[i];
                 
                 let cancion:CancionesLista = new CancionesLista({
-                    id: row['id'],
+                    idCancion: row['id'],
                     nombre: row['nombre'],
                     tonica: row['tonica'],
                     tipoCancion: row['tipoCancion'],
@@ -142,9 +165,62 @@ async function ObtenerCancionesLista(connection, idLista:number){
 }
 
 
+async function UpdateLista(connection, lista):Promise<void>{
+    try {
+        const consulta = " UPDATE listas SET nombre = ?, color = ?" +
+                         " WHERE id = ? ";
+
+        const parametros = [lista.nombre, lista.color, lista.id];
+        await connection.query(consulta, parametros);
+        
+    } catch (error) {
+        throw error; 
+    }
+}
+async function InsertLista(connection, lista):Promise<void>{
+    try {
+        const consulta = " INSERT INTO listas(nombre,color) " +
+                         " VALUES(?,?) ";
+
+        const parametros = [lista.nombre, lista.color];
+        await connection.query(consulta, parametros);
+        
+    } catch (error) {
+        throw error; 
+    }
+}
+async function InsertCancionLista(connection, cancionLista):Promise<void>{
+    try {
+        const consulta = " INSERT INTO cancion_lista(idLista,idcancion,posicion) " +
+                         " VALUES(?,?,?) ";
+
+        const parametros = [cancionLista.idLista, cancionLista.idCancion, cancionLista.posicion];
+        await connection.query(consulta, parametros);
+        
+    } catch (error) {
+        throw error; 
+    }
+}
+async function ObtenerUltimaLista(connection):Promise<number>{
+    try {
+        const rows = await connection.query(" SELECT id FROM listas ORDER BY id DESC LIMIT 1 ");
+        let resultado:number = 0;
+
+        if([rows][0][0].length==0){
+            resultado = 1;
+        }else{
+            resultado = rows[0][0].id + 1;
+        }
+
+        return resultado;
+        
+    } catch (error) {
+        throw error; 
+    }
+}
 async function ValidarExistencia(connection, data:any, modificando:boolean):Promise<boolean>{
     try {
-        let consulta = " SELECT id FROM categorias WHERE nombre = ? ";
+        let consulta = " SELECT id FROM listas WHERE nombre = ? ";
         if(modificando) consulta += " AND id <> ? ";
 
         const parametros = [data.nombre.toUpperCase(), data.id];

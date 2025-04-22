@@ -1,20 +1,21 @@
 {
-    "dev": {
-      "port": 5000,
-      "db": {
-        "host": "127.0.0.1",
-        "user": "root",
-        "password": "",
-        "database": "dbmusicbook"
-      }
-    },
-    "prod": {
-      "port": 5000,
-      "db": {
-        "host": "127.0.0.1",
-        "user": "",
-        "password": "",
-        "database": ""
-      }
+  "dev": {
+    "port": 5000,
+    "produccion":"false",
+    "db": {
+      "host": "127.0.0.1",
+      "user": "root",
+      "password": "1235",
+      "database": "dbmusicbook"
     }
+  },
+  "prod": {
+    "port": 5000,
+    "db": {
+      "host": "127.0.0.1",
+      "user": "",
+      "password": "",
+      "database": ""
+    }
+  }
 }
