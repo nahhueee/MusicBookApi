@@ -37,7 +37,7 @@ router.post('/agregar', async (req:Request, res:Response) => {
         res.json(await ListasRepo.Agregar(req.body));
 
     } catch(error:any){
-        let msg = "Error al intentar agregar la categoria.";
+        let msg = "Error al intentar agregar la lista de canciones.";
         logger.error(msg + " " + error.message);
         res.status(500).send(msg);
     }
@@ -48,7 +48,7 @@ router.put('/modificar', async (req:Request, res:Response) => {
         res.json(await ListasRepo.Modificar(req.body));
 
     } catch(error:any){
-        let msg = "Error al intentar modificar la categoria.";
+        let msg = "Error al intentar modificar la lista de canciones.";
         logger.error(msg + " " + error.message);
         res.status(500).send(msg);
     }
@@ -60,6 +60,27 @@ router.delete('/eliminar/:id', async (req:Request, res:Response) => {
 
     } catch(error:any){
         let msg = "Error al intentar eliminar la lista.";
+        logger.error(msg + " " + error.message);
+        res.status(500).send(msg);
+    }
+});
+
+router.post('/agregar-cancion', async (req:Request, res:Response) => {
+    try{ 
+        res.json(await ListasRepo.InsertCancion(req.body));
+
+    } catch(error:any){
+        let msg = "Error al intentar agregar una canción a la lista de canciones.";
+        logger.error(msg + " " + error.message);
+        res.status(500).send(msg);
+    }
+});
+router.put('/eliminar-cancion', async (req:Request, res:Response) => {
+    try{ 
+        res.json(await ListasRepo.DeleteCancion(req.body));
+
+    } catch(error:any){
+        let msg = "Error al intentar eliminar una canción de la lista.";
         logger.error(msg + " " + error.message);
         res.status(500).send(msg);
     }

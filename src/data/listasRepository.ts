@@ -65,10 +65,13 @@ class ListasRepository{
             await connection.query("DELETE FROM cancion_lista WHERE idLista = ?", [lista.id]);
 
             //Inserta las canciones de la lista
-            for (const cancion of lista.canciones!) {
-                cancion.idLista = lista.id;
-                await InsertCancionLista(connection, cancion);
-            };
+            if(lista.canciones && lista.canciones!.length > 0){
+                for (const cancion of lista.canciones!) {
+                    cancion.idLista = lista.id;
+                    await InsertCancionLista(connection, cancion);
+                };
+            }
+          
 
             await connection.commit();
             return lista.id;
@@ -98,10 +101,12 @@ class ListasRepository{
             await connection.query("DELETE FROM cancion_lista WHERE idLista = ?", [lista.id]);
 
             //Inserta las canciones de la lista
-            for (const cancion of lista.canciones!) {
-                cancion.idLista = lista.id;
-                await InsertCancionLista(connection, cancion);
-            };
+            if(lista.canciones && lista.canciones!.length > 0){
+                for (const cancion of lista.canciones!) {
+                    cancion.idLista = lista.id;
+                    await InsertCancionLista(connection, cancion);
+                };
+            }
 
             await connection.commit();
             return "OK";
@@ -119,6 +124,48 @@ class ListasRepository{
         try {
             await connection.query("DELETE FROM cancion_lista WHERE idLista = ?", [id]);
             await connection.query("DELETE FROM listas WHERE id = ?", [id]);
+            return "OK";
+
+        } catch (error:any) {
+            throw error;
+        } finally{
+            connection.release();
+        }
+    }
+
+    async InsertCancion(data:any){
+        const connection = await db.getConnection();
+
+        try {
+            let existe = await ValidarExistenciaCancionLista(connection, data);
+            if(existe)//Verificamos si ya existe un registro con el mismo nombre 
+                return "Ya existe la canción en la lista.";
+
+            //Obtenemos la última posición
+            const [result]: any = await connection.query(
+                "SELECT posicion FROM cancion_lista WHERE idLista = ? ORDER BY posicion DESC LIMIT 1",
+                [data.idLista]
+            );
+
+            const ultimaPosicion = result[0]?.posicion ?? 0;
+
+            data.posicion = ultimaPosicion + 1;
+            InsertCancionLista(connection, data)
+
+            return "OK";
+
+        } catch (error:any) {
+            throw error;
+        } finally{
+            connection.release();
+        }
+    }
+
+    async DeleteCancion(data:any){
+        const connection = await db.getConnection();
+
+        try {
+            await connection.query("DELETE FROM cancion_lista WHERE idCancion = ? AND idLista = ?", [data.idCancion, data.idLista]);
             return "OK";
 
         } catch (error:any) {
@@ -225,6 +272,19 @@ async function ValidarExistencia(connection, data:any, modificando:boolean):Prom
 
         const parametros = [data.nombre.toUpperCase(), data.id];
 
+        const rows = await connection.query(consulta,parametros);
+        if(rows[0].length > 0) return true;
+
+        return false;
+    } catch (error) {
+        throw error; 
+    }
+}
+async function ValidarExistenciaCancionLista(connection, data:any):Promise<boolean>{
+    try {
+        let consulta = " SELECT idCancion FROM cancion_lista WHERE idCancion = ? AND idLista = ? ";
+
+        const parametros = [data.idCancion, data.idLista];
         const rows = await connection.query(consulta,parametros);
         if(rows[0].length > 0) return true;
 
