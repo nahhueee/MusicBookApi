@@ -89,6 +89,45 @@ class CancionesRepository{
             connection.release();
         }
     }
+
+    async ObtenerCancionesEtiquetas(etiquetas, idCancion, idTipoCancion){
+        const connection = await db.getConnection();
+        
+        try {
+            const sql = ` SELECT DISTINCT c.id idCancion, c.nombre cancion, c.tonica
+                          FROM canciones c
+                          INNER JOIN cancion_etiqueta ce ON c.id = ce.idCancion
+                          INNER JOIN etiquetas e ON e.id = ce.IdEtiqueta
+                          WHERE e.etiqueta IN (?) AND c.idTipoCancion = ? AND c.id != ?`
+
+                          
+            const [canciones]: any[] = await connection.query(sql, [etiquetas, idTipoCancion, idCancion]);
+            return [canciones][0];
+
+        } catch (error:any) {
+            throw error;
+        } finally{
+            connection.release();
+        }
+    }
+    async ObtenerCancionesTonica(tonica, idCancion, idTipoCancion){
+        const connection = await db.getConnection();
+        
+        try {
+            const sql = ` SELECT DISTINCT c.id idCancion, c.nombre cancion, c.tonica
+                          FROM canciones c
+                          WHERE c.tonica = ? AND c.idTipoCancion = ? AND c.id != ?`
+
+                          
+            const [canciones]: any[] = await connection.query(sql, [tonica, idTipoCancion, idCancion]);
+            return [canciones][0];
+
+        } catch (error:any) {
+            throw error;
+        } finally{
+            connection.release();
+        }
+    }
     //#endregion
     
 
