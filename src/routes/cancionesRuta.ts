@@ -54,36 +54,43 @@ router.get('/relacionados/:cancion', async (req:Request, res:Response) => {
         let cancion = await CancionesRepo.ObtenerCancion(req.params.cancion);
         
         let cancionesEtiqueta:any[] = [];
+
+        //Obtenemos las canciones que usan la misma etiqueta
         if(cancion.etiquetas?.length!>0)
             cancionesEtiqueta = await CancionesRepo.ObtenerCancionesEtiquetas(cancion.etiquetas, cancion.id, cancion.idTipoCancion);
         
-        const cancionesTonica = await CancionesRepo.ObtenerCancionesTonica(cancion.tonica, cancion.id, cancion.idTipoCancion);
+        //Obtenemos las canciones que tengan la misma tonica
+        const cancionesTonica = await CancionesRepo.ObtenerCancionesTonicaRelativa(cancion.tonica, cancion.id, cancion.idTipoCancion);
 
-        // Asigná nivel 1 a las que están en ambas listas.
-        // Asigná nivel 2 a las que están solo en cancionesTonica.
-        // Asigná nivel 3 a las que están solo en cancionesEtiqueta.
+        //Obtenemos las canciones relativas
+        const relativa = CancionesRepo.ObtenerRelativa(cancion.tonica);
+        const cancionesRelativa = relativa
+            ? await CancionesRepo.ObtenerCancionesTonicaRelativa(relativa, cancion.id, cancion.idTipoCancion)
+            : [];
 
         const resultado: any[] = [];
 
-        // Primero canciones que coinciden en etiquetas
-        for (const cancionEtiqueta of cancionesEtiqueta) {
-        const matchInTonica = cancionesTonica.find(c => c.idCancion === cancionEtiqueta.idCancion);
-        if (matchInTonica) {
-            // Coincide en ambas → nivel 1
-            resultado.push({ ...cancionEtiqueta, relacion: 1 });
-        } else {
-            // Solo etiqueta → nivel 3
-            resultado.push({ ...cancionEtiqueta, relacion: 3 });
-        }
+        function yaAgregada(idCancion: number): boolean {
+            return resultado.some(c => c.idCancion === idCancion);
         }
 
-        // Luego canciones que solo coinciden en tónica y no fueron agregadas antes
-        for (const cancionTonica of cancionesTonica) {
-        const yaAgregada = resultado.find(c => c.idCancion === cancionTonica.idCancion);
-        if (!yaAgregada) {
-            // Solo tonica → nivel 2
-            resultado.push({ ...cancionTonica, relacion: 2 });
+        // Nivel 1: Coinciden en etiqueta y tonica/relativa
+        for (const cancionEtiqueta of cancionesEtiqueta) {
+            const coincideTonica = cancionesTonica.find(c => c.idCancion === cancionEtiqueta.idCancion);
+            const coincideRelativa = cancionesRelativa.find(c => c.idCancion === cancionEtiqueta.idCancion);
+
+            if (coincideTonica || coincideRelativa) {
+                resultado.push({ ...cancionEtiqueta, relacion: 1 });
+            } else {
+                resultado.push({ ...cancionEtiqueta, relacion: 3 });
+            }
         }
+
+        // Nivel 2: Solo tonica o relativa
+        for (const cancionTonica of [...cancionesTonica, ...cancionesRelativa]) {
+            if (!yaAgregada(cancionTonica.idCancion)) {
+                resultado.push({ ...cancionTonica, relacion: 2 });
+            }
         }
 
         //Ordenamos el array por niveles

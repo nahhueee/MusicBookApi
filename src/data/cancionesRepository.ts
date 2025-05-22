@@ -110,7 +110,7 @@ class CancionesRepository{
             connection.release();
         }
     }
-    async ObtenerCancionesTonica(tonica, idCancion, idTipoCancion){
+    async ObtenerCancionesTonicaRelativa(nota, idCancion, idTipoCancion){
         const connection = await db.getConnection();
         
         try {
@@ -119,7 +119,7 @@ class CancionesRepository{
                           WHERE c.tonica = ? AND c.idTipoCancion = ? AND c.id != ?`
 
                           
-            const [canciones]: any[] = await connection.query(sql, [tonica, idTipoCancion, idCancion]);
+            const [canciones]: any[] = await connection.query(sql, [nota, idTipoCancion, idCancion]);
             return [canciones][0];
 
         } catch (error:any) {
@@ -127,6 +127,32 @@ class CancionesRepository{
         } finally{
             connection.release();
         }
+    }
+
+    ObtenerRelativa(tonica:string){
+        const NOTAS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+        const match = tonica.match(/^([A-G]#?)(m?)$/i);
+        if (!match) return null;
+
+        const nota = match[1].toUpperCase();
+        const esMenor = match[2] === 'm';
+
+        const index = NOTAS.indexOf(nota);
+        if (index === -1) return null;
+
+        let relativaIndex: number;
+        let relativaNota: string;
+
+        if (esMenor) {
+            relativaIndex = (index + 3) % 12;
+            relativaNota = NOTAS[relativaIndex]; // Relativa mayor
+        } else {
+            relativaIndex = (index + 9) % 12; // (index - 3 + 12) % 12
+            relativaNota = NOTAS[relativaIndex] + 'm'; // Relativa menor
+        }
+
+        return relativaNota;
     }
     //#endregion
     
@@ -259,6 +285,7 @@ async function ObtenerQuery(filtros:any,esTotal:boolean,idCancion:number):Promis
         //#region VARIABLES
         let query:string;
         let filtro:string = "";
+        let orden:string = "";
         let paginado:string = "";
     
         let count:string = "";
@@ -276,6 +303,14 @@ async function ObtenerQuery(filtros:any,esTotal:boolean,idCancion:number):Promis
             filtro += " AND e.etiqueta IN ("+ filtros.etiquetas.map(e => `'${e}'`).join(',') + ")";
         if (idCancion != null && idCancion != 0) 
             filtro += " AND c.id = "+ idCancion;
+        // #endregion
+
+        // #region ORDENAMIENTO
+        if (filtros.orden != null && filtros.orden != ""){
+            orden += " ORDER BY c."+ filtros.orden + " " + filtros.direccion;
+        } else{
+            orden += " ORDER BY c.id DESC";
+        }           
         // #endregion
 
         if (esTotal)
@@ -297,7 +332,7 @@ async function ObtenerQuery(filtros:any,esTotal:boolean,idCancion:number):Promis
                 " LEFT JOIN tipo_cancion tc ON tc.id = c.idTipoCancion " +
                 " WHERE 1 = 1 " +
                 filtro +
-                " ORDER BY c.id DESC " +
+                orden +
                 paginado + 
                 endCount;
 
