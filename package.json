@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "tsc && nodemon src/index.ts",
     "tsc": "tsc",
-    "build": ""
+    "build": "tsc && npm run copy-files ",
+     "copy-files": "cpy config.json .env package.json out/"
   },
   "author": "Nahuel Aquino",
   "license": "ISC",
