@@ -92,16 +92,15 @@ class CancionesRepository{
 
     async ObtenerCancionesEtiquetas(etiquetas, idCancion, idTipoCancion){
         const connection = await db.getConnection();
-        
         try {
-            const sql = ` SELECT DISTINCT c.id idCancion, c.nombre cancion, c.tonica
-                          FROM canciones c
-                          INNER JOIN cancion_etiqueta ce ON c.id = ce.idCancion
-                          INNER JOIN etiquetas e ON e.id = ce.IdEtiqueta
-                          WHERE e.etiqueta IN (?) AND c.idTipoCancion = ? AND c.id != ?`
+            let sql = ` SELECT DISTINCT c.id idCancion, c.nombre cancion, c.tonica
+                        FROM canciones c
+                        INNER JOIN cancion_etiqueta ce ON c.id = ce.idCancion
+                        INNER JOIN etiquetas e ON e.id = ce.IdEtiqueta
+                        WHERE c.idTipoCancion = ? AND c.id <> ? `
 
-                          
-            const [canciones]: any[] = await connection.query(sql, [etiquetas, idTipoCancion, idCancion]);
+            if(etiquetas.length > 0) sql += `AND e.etiqueta IN (?)`;
+            const [canciones]: any[] = await connection.query(sql, [idTipoCancion, idCancion, etiquetas]);
             return [canciones][0];
 
         } catch (error:any) {
@@ -112,14 +111,12 @@ class CancionesRepository{
     }
     async ObtenerCancionesTonicaRelativa(nota, idCancion, idTipoCancion){
         const connection = await db.getConnection();
-        
         try {
-            const sql = ` SELECT DISTINCT c.id idCancion, c.nombre cancion, c.tonica
-                          FROM canciones c
-                          WHERE c.tonica = ? AND c.idTipoCancion = ? AND c.id != ?`
-
+            const sql = ` SELECT DISTINCT id idCancion, nombre cancion, tonica
+                          FROM canciones WHERE tonica = ? AND idTipoCancion = ? AND id <> ?`
                           
-            const [canciones]: any[] = await connection.query(sql, [nota, idTipoCancion, idCancion]);
+            console.log(sql)
+                          const [canciones]: any[] = await connection.query(sql, [nota, idTipoCancion, idCancion]);
             return [canciones][0];
 
         } catch (error:any) {
@@ -128,31 +125,8 @@ class CancionesRepository{
             connection.release();
         }
     }
-
-    ObtenerRelativa(tonica:string){
-        const NOTAS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-
-        const match = tonica.match(/^([A-G]#?)(m?)$/i);
-        if (!match) return null;
-
-        const nota = match[1].toUpperCase();
-        const esMenor = match[2] === 'm';
-
-        const index = NOTAS.indexOf(nota);
-        if (index === -1) return null;
-
-        let relativaIndex: number;
-        let relativaNota: string;
-
-        if (esMenor) {
-            relativaIndex = (index + 3) % 12;
-            relativaNota = NOTAS[relativaIndex]; // Relativa mayor
-        } else {
-            relativaIndex = (index + 9) % 12; // (index - 3 + 12) % 12
-            relativaNota = NOTAS[relativaIndex] + 'm'; // Relativa menor
-        }
-
-        return relativaNota;
+    ObtenerNotaRelativa(tonica:string){
+        return ObtenerRelativa(tonica);
     }
     //#endregion
     
@@ -297,6 +271,12 @@ async function ObtenerQuery(filtros:any,esTotal:boolean,idCancion:number):Promis
             filtro += " AND c.nombre LIKE '%"+ filtros.busqueda + "%' ";
         if (filtros.idCategoria != null && filtros.idCategoria != 0) 
             filtro += " AND c.idCategoria = "+ filtros.idCategoria;
+        if (filtros.tonica != null && filtros.tonica != "") {
+            filtro += " AND (c.tonica = '"+ filtros.tonica + "'"; //Mayores
+            filtro += " OR c.tonica = '"+ filtros.tonica + "m'"; //Menores
+            const relativa = ObtenerRelativa(filtros.tonica);
+            filtro += " OR c.tonica = '"+ relativa + "')"; //Relativa
+        }
         if (filtros.idTipoCancion != null && filtros.idTipoCancion != 0) 
             filtro += " AND c.idTipoCancion = "+ filtros.idTipoCancion;
         if (filtros.etiquetas != null && filtros.etiquetas.length > 0) 
@@ -556,6 +536,32 @@ async function ObtenerEtiquetasCancion(connection, idCancion: number): Promise<s
     } catch (error) {
         throw error;
     }
+}
+
+function ObtenerRelativa(tonica:string){
+    const NOTAS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+    const match = tonica.match(/^([A-G]#?)(m?)$/i);
+    if (!match) return null;
+
+    const nota = match[1].toUpperCase();
+    const esMenor = match[2] === 'm';
+
+    const index = NOTAS.indexOf(nota);
+    if (index === -1) return null;
+
+    let relativaIndex: number;
+    let relativaNota: string;
+
+    if (esMenor) {
+        relativaIndex = (index + 3) % 12;
+        relativaNota = NOTAS[relativaIndex]; // Relativa mayor
+    } else {
+        relativaIndex = (index + 9) % 12; // (index - 3 + 12) % 12
+        relativaNota = NOTAS[relativaIndex] + 'm'; // Relativa menor
+    }
+
+    return relativaNota;
 }
 
 

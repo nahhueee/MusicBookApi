@@ -63,7 +63,7 @@ router.get('/relacionados/:cancion', async (req:Request, res:Response) => {
         const cancionesTonica = await CancionesRepo.ObtenerCancionesTonicaRelativa(cancion.tonica, cancion.id, cancion.idTipoCancion);
 
         //Obtenemos las canciones relativas
-        const relativa = CancionesRepo.ObtenerRelativa(cancion.tonica);
+        const relativa = CancionesRepo.ObtenerNotaRelativa(cancion.tonica);
         const cancionesRelativa = relativa
             ? await CancionesRepo.ObtenerCancionesTonicaRelativa(relativa, cancion.id, cancion.idTipoCancion)
             : [];
@@ -99,7 +99,7 @@ router.get('/relacionados/:cancion', async (req:Request, res:Response) => {
         res.json(resultado)
 
     } catch(error:any){
-        let msg = "Error al obtener el selector de etiquetas.";
+        let msg = "Error al obtener los relacionados de la canción.";
         logger.error(msg + " " + error.message);
         res.status(500).send(msg);
     }
